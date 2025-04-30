@@ -1,5 +1,5 @@
-import { Square } from "./Square";
-import { Button } from "./Button";
+import { Square } from "./Square.jsx";
+import { Button } from "./Button.jsx";
 
 export function WinnerModal ({winner, resetGame}){
     if(winner === null) return null;

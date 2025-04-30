@@ -8,10 +8,19 @@ import { TURNS } from './utils/constants.js';
 import { checkWinner, checkEndGame } from './utils/board.js';
 import { WinnerModal } from './components/WinnerModal.jsx';
 import { Button } from './components/Button.jsx';
+import { saveGameToStorahe, removeFromStorage } from './utils/storage.js';
 
 function App() {
-  const [board, setBoard] = useState(Array(9).fill(null));
-  const [turn, setTurn] = useState(TURNS.X);
+  const [board, setBoard] = useState(() => {
+    const boardFromStorage = window.localStorage.getItem('board');
+    if(boardFromStorage) return JSON.parse(boardFromStorage)
+      return Array(9).fill(null);
+  });
+
+  const [turn, setTurn] = useState(() =>{
+    const turnFromStorage = window.localStorage.getItem('turn');
+    return turnFromStorage ?? TURNS.X;
+  });
   const [winner, setWinner] = useState(null);
 
   const updateBoard = (index) => {
@@ -19,13 +28,16 @@ function App() {
     const newBoard = [...board];
     newBoard[index] = turn;
     setBoard(newBoard);
-
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X;
     setTurn(newTurn);
+    //Guardar partida
+    saveGameToStorahe({board: newBoard, turn: newTurn});
+    //Revisar si hay un ganador
     const newWinner = checkWinner(newBoard);
     if(newWinner){
       confetti();
       setWinner(newWinner);
+    //Revisar si hay empate
     }else if(checkEndGame(newBoard)){
       setWinner(false);
     }
@@ -35,6 +47,8 @@ function App() {
     setBoard(Array(9).fill(null));
     setTurn(TURNS.X);
     setWinner(null);
+
+    removeFromStorage();
   }
 
   return (
