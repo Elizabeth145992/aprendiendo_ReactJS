@@ -10,6 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "canvas-confetti": "^1.9.3"
+    "canvas-confetti": "^1.9.3",
+    "standard": "^17.1.2"
+  },
+  "eslintConfig": {
+    "extends": "./node_modules/standard/eslintrc.json"
   }
 }
