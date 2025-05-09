@@ -6,6 +6,10 @@ function App() {
   const [position, setPosition] = useState({x:0, y:0});
 
   //Cambio de posiciones del cursor para seguir la bolita
+  //Un UseEffect se puede ejecutar:
+  //[] -> solo se ejecuta cuando se monta el componente
+  // [dependencia, ...] -> se ejecuta cuando cambia la o las dependencias
+  // undefined -> se ejecuta cada vez de que se renderiza el componente
   useEffect(() => {
     const handleMove = (event) => {
       const { clientX, clientY} = event;
