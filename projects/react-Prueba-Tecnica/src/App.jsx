@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
+import { getRandomFact } from "./services/facts";
+import { useCatImage } from "./hooks/useCatImage";
 import './App.css';
 
-const cat_endpoint_random_cat = 'https://catfact.ninja/fact';
 export function App(){
     const [fact, setFact] = useState();
-    const [imageUrl, setImageUrl] = useState();
-
+    const { imageUrl } = useCatImage({ fact });
 
     useEffect(()=>{
-        fetch(cat_endpoint_random_cat)
-        .then(res => res.json())
-        .then(data => {
-            setFact(data.fact);
-        });
+        getRandomFact().then(setFact);
+
+        /*
+        Se pueden pasar las fucniones como parametros
+        getRandomFact().then(newFact => {
+            setFact(newFact);
+        });*/
+
         //Si se usa para peticiones asincronas con el fetch
         /*async function getRandomFact() {
             const res = await fetch(cat_endpoint_random_cat);
@@ -22,23 +25,16 @@ export function App(){
         getRandomFact();*/
     }, [])
 
-    useEffect(()=>{
-        if(!fact) return;
-        const threeWoords = fact.split(' ').slice(0,3).join(' ');
-
-        fetch(`https://cataas.com/cat/says/${threeWoords}?
-                size=500&color=red&json=true`)
-                .then(res => res.json())
-                .then(response => {
-                    const {url} = response;
-                    setImageUrl(url);
-                })
-    }, [fact])
+    const handleClick = async () => {
+       const newFact = await getRandomFact();
+       setFact(newFact);
+    }
 
     return(
     <>
     <main>
         <h1>React</h1>
+        <button onClick={handleClick}>Get new fact</button>
        {fact && <p>{fact}</p>}
        {imageUrl && <img src={imageUrl} 
        alt={`Image extracted using the first word for ${fact}`} />}
