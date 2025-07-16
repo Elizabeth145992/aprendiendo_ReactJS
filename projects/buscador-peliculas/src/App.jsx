@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import "./App.css";
 //import { useRef } from 'react';
 import { Movies } from "./components/Movies";
 import { useMovies } from "./hooks/useMovies";
+import { useSearch } from './hooks/useSearch';
 
 function App() {
   const { movies } = useMovies();
-  const [ query, setQuery] = useState('');
+  const { search, setSearch, error } = useSearch();
   //const inputRef = useRef();
 
   //Usando el hook de Ref
@@ -16,14 +16,16 @@ function App() {
   }*/
 
   const handleSubmit = (event) => {
+    //Esta línea sirve para poder recuperar varios valores de inputs en una sola variable
+    //const fields = Object.fromEntries(new window.FormData(event.target));
     event.preventDefault();
-    console.log(query);
   };
 
   const handleChange = (event) =>{
-    setQuery(event.target.value);
+    const newSearch = event.target.value;
+    if(newSearch.startsWith(' ')) return;
+    setSearch(event.target.value);
   }
-  
 
   return (
     <>
@@ -33,7 +35,7 @@ function App() {
           <form className="form" onSubmit={handleSubmit}>
             <input
               /*ref={inputRef}*/
-              value={query}
+              value={search}
               onChange={handleChange}
               name="query"
               type="text"
@@ -41,6 +43,7 @@ function App() {
             />
             <button type="submit">Buscar</button>
           </form>
+          {error && <p style={{ color:'red' }}>{error}</p>}
         </header>
 
         <main>
