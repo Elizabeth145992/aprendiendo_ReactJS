@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 //import { useRef } from 'react';
 import { Movies } from "./components/Movies";
@@ -5,8 +6,10 @@ import { useMovies } from "./hooks/useMovies";
 import { useSearch } from './hooks/useSearch';
 
 function App() {
-  const { movies } = useMovies();
+  //const { movies } = useMovies();
   const { search, setSearch, error } = useSearch();
+    const [sort, setSort] = useState(false);
+  const { movies, getMovies, loading, errorMovies } = useMovies({search, sort});
   //const inputRef = useRef();
 
   //Usando el hook de Ref
@@ -18,13 +21,18 @@ function App() {
   const handleSubmit = (event) => {
     //Esta línea sirve para poder recuperar varios valores de inputs en una sola variable
     //const fields = Object.fromEntries(new window.FormData(event.target));
-    event.preventDefault();
+    event.preventDefault(); 
+    getMovies({ search });
   };
 
   const handleChange = (event) =>{
     const newSearch = event.target.value;
     if(newSearch.startsWith(' ')) return;
     setSearch(event.target.value);
+  }
+
+  const handleSort = () => {
+    setSort(!sort);
   }
 
   return (
@@ -42,11 +50,14 @@ function App() {
               placeholder="Busca tu pelicula favorita"
             />
             <button type="submit">Buscar</button>
+            <input type="checkbox" onChange={handleSort} checked={sort} />
           </form>
           {error && <p style={{ color:'red' }}>{error}</p>}
         </header>
 
         <main>
+          {loading ? <p>Cargando...</p>: null}
+          {errorMovies ? <p style={'color:red;'}>{errorMovies}</p>: null}
           <Movies movies={movies} />
         </main>
       </div>
