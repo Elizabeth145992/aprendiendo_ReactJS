@@ -1,15 +1,22 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import "./App.css";
 //import { useRef } from 'react';
 import { Movies } from "./components/Movies";
 import { useMovies } from "./hooks/useMovies";
 import { useSearch } from './hooks/useSearch';
+import debounce from 'just-debounce-it';
 
 function App() {
   //const { movies } = useMovies();
   const { search, setSearch, error } = useSearch();
-    const [sort, setSort] = useState(false);
+  const [sort, setSort] = useState(false);
   const { movies, getMovies, loading, errorMovies } = useMovies({search, sort});
+  
+  const debouncedGetMovies = useCallback(
+    debounce(search =>{
+    getMovies({search})
+  }, 300)
+  ,[getMovies])
   //const inputRef = useRef();
 
   //Usando el hook de Ref
@@ -27,8 +34,10 @@ function App() {
 
   const handleChange = (event) =>{
     const newSearch = event.target.value;
+    
     if(newSearch.startsWith(' ')) return;
-    setSearch(event.target.value);
+    setSearch(newSearch);
+    debouncedGetMovies(newSearch);
   }
 
   const handleSort = () => {
