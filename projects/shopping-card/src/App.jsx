@@ -1,31 +1,19 @@
 import { products as initialProducts } from './mocks/products.json'
 import { Products } from './components/Products'
 import { Header } from './components/Header.jsx';
+import { Footer } from './components/Footer.jsx';
 import { useState } from 'react'
+import { useFilters } from './hooks/useFilters.js';
+
 function App() {
-  const [products, setProducts] = useState(initialProducts);
-  const [filters, setFilters] = useState({
-    category: 'all',
-    minPrice: 0
-  })
-
-  const filteredProducts = (products) =>{
-    return products.filter(product =>{
-      return(
-        product.price >= filters.minPrice &&
-        (
-          filters.category === 'all' ||
-          product.category === filters.category
-        )
-      )
-    })
-  }
-
-  const filterProducts = filteredProducts(products);
+  const [products] = useState(initialProducts);
+  const { filterProducts } = useFilters()
+  const filteredProducts = filterProducts(products);
   return (
     <>
-    <Header changeFilters={setFilters} />
-    <Products products={ filterProducts } />
+    <Header />
+    <Products products={ filteredProducts } />
+    <Footer />
     </>
   )
 }
