@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { EVENTS } from "./const";
 import Home from "./pages/home.jsx";
 import About from "./pages/About.jsx";
+import { Router } from "./Router.jsx";
+import  NotFound  from "./pages/NoFound.jsx";
 
 const routes = [
   {
@@ -12,37 +12,17 @@ const routes = [
     path: "/about",
     component: About,
   },
+  {
+    path: '/search/:query',
+    component: () => <h1>Search</h1>,
+  }
 ];
-
-function Router({
-  routes = [],
-  defaultComponent: DefaultComponent = () => <h1>404 - Not Found</h1>}) {
-  const [currentPage, setCurrentPage] = useState(window.location.pathname);
-
-  useEffect(() => {
-    const onLocationChange = () => {
-      setCurrentPage(window.location.pathname);
-    };
-
-    window.addEventListener(EVENTS.NAVIGATION, onLocationChange);
-    window.addEventListener(EVENTS.POPSTATE, onLocationChange);
-
-    return () => {
-      window.removeEventListener(EVENTS.NAVIGATION, onLocationChange);
-      window.removeEventListener(EVENTS.POPSTATE, onLocationChange);
-    };
-  }, []);
-
-  const Page = routes.find((route) => route.path === currentPage)?.component;
-
-  return Page ? <Page /> : <DefaultComponent />;
-}
 
 function App() {
   return (
     <>
       <main>
-        <Router routes={routes} />
+        <Router routes={routes} defaultComponent={NotFound} />
       </main>
     </>
   );
